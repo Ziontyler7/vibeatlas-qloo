@@ -36,6 +36,21 @@ export interface QlooAgentStageTrace {
   summary: string;
 }
 
+export interface QlooInsightsRequestSpec {
+  endpointUrl: string;
+  httpMethod: 'GET';
+  queryParams: {
+    'filter.type': 'urn:entity:place';
+    'filter.location.query': string;
+    'filter.location.radius': number;
+    'signal.interests.entities': string;
+    'signal.interests.tags': string;
+    'feature.explainability': 'true';
+  };
+  fullRequestUri: string;
+  privacyGuarantee: 'ZERO_PII_ANONYMIZED_TASTE_VECTORS_ONLY';
+}
+
 export interface QlooCuratorExecutionResult {
   executionMode: QlooExecutionMode;
   circuitBreakerTripped: boolean;
@@ -43,6 +58,7 @@ export interface QlooCuratorExecutionResult {
   sanitizedNote: string;
   piiRedactedCount: number;
   itinerary: SolvedDayToNightItinerary;
+  qlooInsightsRequestSpec: QlooInsightsRequestSpec;
   stageTraces: QlooAgentStageTrace[];
   executiveNarrative: string;
   totalPipelineLatencyMs: number;
@@ -80,6 +96,53 @@ export function computeFnv1a32Hex(payload: string): string {
     hash = Math.imul(hash, 0x01000193) >>> 0;
   }
   return hash.toString(16).toUpperCase().padStart(8, '0');
+}
+
+export function buildQlooInsightsRequestSpec(
+  hub: CulturalHubPreset,
+  selectedSeeds: readonly CulturalSeedEntity[],
+  constraints: ItineraryConstraints
+): QlooInsightsRequestSpec {
+  const entityUrns = selectedSeeds.map((s) => s.qlooEntityUrn).join(',');
+  const tagUrns = Array.from(
+    new Set(
+      selectedSeeds
+        .flatMap((s) => s.vibeTags.map((t) => `urn:tag:genre:${t}`))
+        .concat(
+          constraints.requiredDietaryTags.map(
+            (d) => `urn:tag:dietary:${d.toLowerCase()}`
+          )
+        )
+    )
+  ).join(',');
+  const radiusMeters = Math.round(constraints.maxWalkPerLegKm * 1000);
+  const locationQuery = `${hub.city}, ${hub.countryCode}`;
+
+  const queryParams = {
+    'filter.type': 'urn:entity:place' as const,
+    'filter.location.query': locationQuery,
+    'filter.location.radius': radiusMeters,
+    'signal.interests.entities': entityUrns,
+    'signal.interests.tags': tagUrns,
+    'feature.explainability': 'true' as const,
+  };
+
+  const searchParams = new URLSearchParams({
+    'filter.type': queryParams['filter.type'],
+    'filter.location.query': queryParams['filter.location.query'],
+    'filter.location.radius': String(queryParams['filter.location.radius']),
+    'signal.interests.entities': queryParams['signal.interests.entities'],
+    'signal.interests.tags': queryParams['signal.interests.tags'],
+    'feature.explainability': queryParams['feature.explainability'],
+  });
+
+  return {
+    endpointUrl: 'https://api.qloo.com/v2/insights',
+    httpMethod: 'GET',
+    queryParams,
+    fullRequestUri: `https://api.qloo.com/v2/insights?${searchParams.toString()}`,
+    privacyGuarantee: 'ZERO_PII_ANONYMIZED_TASTE_VECTORS_ONLY',
+  };
 }
 
 function buildCanonicalAttestationPayload(
@@ -198,6 +261,11 @@ export async function runQlooAgenticCuratorPipeline(
   );
 
   const itinerary = solveDayToNightItinerary(hub, selectedSeeds, constraints);
+  const qlooInsightsRequestSpec = buildQlooInsightsRequestSpec(
+    hub,
+    selectedSeeds,
+    constraints
+  );
   let executionMode: QlooExecutionMode = 'LOCAL_QLOO_TASTE_GRAPH_FALLBACK';
   let circuitBreakerTripped = false;
   let fallbackReason: string | undefined;
@@ -211,20 +279,14 @@ export async function runQlooAgenticCuratorPipeline(
     const fetchImpl = options.customFetch ?? fetch;
 
     try {
-      const entityUrns = selectedSeeds.map((s) => s.qlooEntityUrn).join(',');
-      const response = await fetchImpl(
-        `https://api.qloo.com/v2/insights?filter.type=urn:entity:place&signal.interests.entities=${encodeURIComponent(
-          entityUrns
-        )}`,
-        {
-          method: 'GET',
-          headers: {
-            'X-Api-Key': options.apiKey.trim(),
-            Accept: 'application/json',
-          },
-          signal: controller.signal,
-        }
-      );
+      const response = await fetchImpl(qlooInsightsRequestSpec.fullRequestUri, {
+        method: 'GET',
+        headers: {
+          'X-Api-Key': options.apiKey.trim(),
+          Accept: 'application/json',
+        },
+        signal: controller.signal,
+      });
 
       if (response.ok) {
         executionMode = 'LIVE_QLOO_TASTE_API';
@@ -305,6 +367,7 @@ export async function runQlooAgenticCuratorPipeline(
     sanitizedNote: scrubReport.sanitizedPrompt,
     piiRedactedCount: scrubReport.redactedTokenCount,
     itinerary,
+    qlooInsightsRequestSpec,
     stageTraces,
     executiveNarrative,
     totalPipelineLatencyMs,

@@ -225,6 +225,20 @@ async function runAllVerificationGates(): Promise<void> {
     assert.equal(fallbackRun.stageTraces.length, 4);
     assert.ok(fallbackRun.piiRedactedCount >= 2);
     assert.ok(!fallbackRun.sanitizedNote.includes('guest@hotel.mx'));
+    assert.equal(
+      fallbackRun.qlooInsightsRequestSpec.queryParams['filter.type'],
+      'urn:entity:place',
+      'Qloo v2/insights must filter by urn:entity:place'
+    );
+    assert.equal(
+      fallbackRun.qlooInsightsRequestSpec.queryParams['feature.explainability'],
+      'true',
+      'Qloo v2/insights must enable feature.explainability=true'
+    );
+    assert.equal(
+      fallbackRun.qlooInsightsRequestSpec.privacyGuarantee,
+      'ZERO_PII_ANONYMIZED_TASTE_VECTORS_ONLY'
+    );
 
     // Test FNV-1a Concierge Passport Attestation Seal & tamper invalidation
     const attestation = createConciergePassportAttestation(

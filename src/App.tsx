@@ -20,6 +20,7 @@ import {
 import {
   type ConciergePassportAttestation,
   type QlooCuratorExecutionResult,
+  buildQlooInsightsRequestSpec,
   createConciergePassportAttestation,
   runQlooAgenticCuratorPipeline,
   verifyConciergeAttestationIntegrity,
@@ -54,9 +55,9 @@ export default function App() {
   const [rawTravelerNote, setRawTravelerNote] = useState<string>(
     'Seeking analog vinyl acoustics, timber architecture, and fermented botanical dining. Contact: guest@example.com or 415-555-0199.'
   );
-  const [activeExportTab, setActiveExportTab] = useState<'MARKDOWN' | 'GEOJSON' | 'ICS'>(
-    'MARKDOWN'
-  );
+  const [activeExportTab, setActiveExportTab] = useState<
+    'MARKDOWN' | 'GEOJSON' | 'ICS' | 'QLOO_API_SPEC'
+  >('MARKDOWN');
   const [attestation, setAttestation] = useState<ConciergePassportAttestation | null>(null);
   const [pipelineResult, setPipelineResult] = useState<QlooCuratorExecutionResult | null>(null);
 
@@ -142,12 +143,19 @@ export default function App() {
     if (activeExportTab === 'ICS') {
       return exportItineraryIcs(solvedItinerary);
     }
+    if (activeExportTab === 'QLOO_API_SPEC') {
+      return JSON.stringify(
+        buildQlooInsightsRequestSpec(currentHub, activeSeeds, constraints),
+        null,
+        2
+      );
+    }
     return exportConciergeMarkdown(
       solvedItinerary,
       activeSeeds,
       attestationValid ? attestation?.fnv1aHash : undefined
     );
-  }, [activeExportTab, solvedItinerary, activeSeeds, attestationValid, attestation]);
+  }, [activeExportTab, solvedItinerary, activeSeeds, attestationValid, attestation, currentHub, constraints]);
 
   // Compute 6-axis radar polygon coordinates
   const radarPolygonPoints = useMemo(() => {
@@ -572,9 +580,9 @@ export default function App() {
 
           <div className="panel">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h2 style={{ margin: 0 }}>Concierge Passport Export (GeoJSON / iCal .ics / Markdown)</h2>
+              <h2 style={{ margin: 0 }}>Concierge Passport &amp; Qloo v2/insights Export</h2>
               <div className="badge-row">
-                {(['MARKDOWN', 'GEOJSON', 'ICS'] as const).map((tab) => (
+                {(['MARKDOWN', 'GEOJSON', 'ICS', 'QLOO_API_SPEC'] as const).map((tab) => (
                   <button
                     key={tab}
                     type="button"

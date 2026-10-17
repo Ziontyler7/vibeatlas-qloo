@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "files": [
+    "src/main.tsx",
+    "src/App.tsx",
+    "src/lib/taste/qloo-taste-graph.ts",
+    "src/lib/routing/day-to-night-itinerary-solver.ts",
+    "src/lib/export/concierge-passport-exporter.ts",
+    "src/lib/qloo/qloo-agentic-supervisor.ts",
+    "src/test/vibeatlas-verification.test.ts"
+  ]
+}

@@ -19,3 +19,5 @@ flowchart LR
    - Produces standards-compliant RFC 7946 GeoJSON (`exportItineraryGeoJson`), RFC 5545 iCalendar (`exportItineraryIcs`), and Markdown (`exportConciergeMarkdown`).
 4. **`src/lib/qloo/qloo-agentic-supervisor.ts`**:
    - Executes the 4-stage agentic pipeline (`runQlooAgenticCuratorPipeline`) with a `4.5s` `AbortController` circuit breaker and FNV-1a-32 attestation (`createConciergePassportAttestation`, `verifyConciergeAttestationIntegrity`).
+
+- **Qloo Insights v2 Contract Builder**: `buildQlooInsightsRequestSpec()` in `src/lib/qloo/qloo-agentic-supervisor.ts` generates the complete `GET https://api.qloo.com/v2/insights` specification rendered in the `QLOO_API_SPEC` studio tab.

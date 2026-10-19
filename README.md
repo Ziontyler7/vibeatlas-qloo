@@ -35,3 +35,7 @@ npm run build
 # Launch Interactive Studio on Port 5186
 npm run dev
 ```
+
+## 🔍 Qloo Taste AI v2 `GET /v2/insights` Request Contract Inspector (`QLOO_API_SPEC`)
+
+- **Sponsor-Exact Parameter Mapping (`buildQlooInsightsRequestSpec`)**: Constructs verified `GET https://api.qloo.com/v2/insights` requests with `filter.type=urn:entity:place`, `filter.location.query`, `filter.location.radius`, `signal.interests.entities`, `signal.interests.tags`, and `feature.explainability=true`, inspectable live in the **`QLOO_API_SPEC`** export tab.

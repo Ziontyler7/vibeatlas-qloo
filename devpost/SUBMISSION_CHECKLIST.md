@@ -6,3 +6,5 @@
 - [x] **Gate 4 (`qloo-agentic-supervisor.ts`)**: 4-stage Qloo Taste AI agentic pipeline with `4.5s` `AbortController` fallback and FNV-1a-32 Concierge Passport attestation seal.
 - [x] **Gate 5 (`App.tsx` on Port `5186`)**: Interactive SVG Neighborhood Geodesic Route Canvas, 6-Axis Cross-Domain Taste Radar, live What-If constraint sliders, and multi-format export preview.
 - [x] **Gate 6 (`vibeatlas-verification.test.ts`)**: `6/6` automated verification gates + clean-room audit passing.
+
+- [x] **Qloo Taste AI v2 `GET /v2/insights` Contract Inspector (`QLOO_API_SPEC`)**: Verified in Gate 4 (`filter.type=urn:entity:place`, `signal.interests.entities`, `feature.explainability=true`) and interactive studio export tab.

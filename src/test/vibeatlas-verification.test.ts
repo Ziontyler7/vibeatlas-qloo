@@ -2,7 +2,7 @@
  * VibeAtlas Qloo — 6-Gate Empirical Verification Suite
  *
  * Run via:
- *   node --experimental-strip-types /Users/zion/Desktop/vibeatlas-qloo/src/test/vibeatlas-verification.test.ts
+ *   node --experimental-strip-types src/test/vibeatlas-verification.test.ts
  */
 
 import assert from 'node:assert/strict';
@@ -305,6 +305,9 @@ async function runAllVerificationGates(): Promise<void> {
       'devpost/PRD.md',
       'devpost/ARCHITECTURE.md',
       'devpost/SUBMISSION_CHECKLIST.md',
+      'devpost/DEVPOST_SUBMISSION.md', 'devpost/PRD.md', 'devpost/ARCHITECTURE.md', 'devpost/SUBMISSION_CHECKLIST.md', 'firebase.json',
+      'LICENSE',
+      '.env.example',
       'src/main.tsx',
       'src/App.tsx',
       'src/styles.css',

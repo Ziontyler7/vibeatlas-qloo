@@ -13,3 +13,5 @@ Travelers and local explorers rarely discover neighborhoods through generic star
 ## 3. Target Users
 - **Independent Cultural Travelers**: Curating walkable, authentic neighborhood days anchored by their favorite films, records, and books.
 - **Boutique Hospitality Concierges**: Issuing attested, constraint-verified GeoJSON and `.ics` itineraries for guests with strict dietary or accessibility needs.
+
+- **Qloo Taste AI v2 `GET /v2/insights` Explainability Contract (`QLOO_API_SPEC`)**: Exposes the exact `filter.type=urn:entity:place`, `signal.interests.entities`, `signal.interests.tags`, and `feature.explainability=true` query parameters with zero-PII headers.

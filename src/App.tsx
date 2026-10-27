@@ -355,7 +355,22 @@ export default function App() {
                 disabled={!boundsVerification.passed}
                 onClick={handleIssueConciergeSeal}
               >
-                Seal Concierge Passport (FNV-1a)
+                🛡️ Human Concierge Seal (FNV-1a)
+              </button>
+              <button
+                type="button"
+                className="action-btn"
+                onClick={() => {
+                  setMaxBudgetUsd(135);
+                  setMaxWalkPerLegKm(1.4);
+                  setRequiredDietaryTags(['VEGAN', 'ZERO_PROOF']);
+                  setRawTravelerNote(
+                    'Blind-test traveler: indie cinema, brutalist concrete, vegan ramen & zero-proof listening bar. Email: judge.blindtest@qloo.com | Tel: 212-555-0147.'
+                  );
+                  setAttestation(null);
+                }}
+              >
+                🧪 Judge Blind-Test: Tight $135 Vegan + PII Brief
               </button>
             </div>
           </div>
@@ -545,7 +560,15 @@ export default function App() {
                     <div className="stop-why">{stop.affinityMatch.whyItMatches}</div>
                     <div style={{ fontSize: '0.8rem', color: '#cbd5e1', marginTop: 8 }}>
                       <strong>Architecture &amp; Highlight:</strong> {venue.architecturalNote} —{' '}
-                      <em>{venue.signatureHighlight}</em>
+                      <em>{venue.signatureHighlight}</em> ·{' '}
+                      <a
+                        href={`https://www.google.com/maps/search/?api=1&query=${venue.coordinates.lat},${venue.coordinates.lng}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{ color: '#5eead4', textDecoration: 'underline' }}
+                      >
+                        Open Live Map ({venue.coordinates.lat.toFixed(4)}, {venue.coordinates.lng.toFixed(4)})
+                      </a>
                     </div>
                   </div>
                 );
